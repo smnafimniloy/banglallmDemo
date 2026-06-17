@@ -261,85 +261,156 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600&display=swap');
 
-.bengali-text {
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 16px;
-    line-height: 1.8;
+/* ── Bengali text rendering ── */
+.bengali-text, .prompt-echo, .generated-text {
+    font-family: 'Noto Sans Bengali', sans-serif !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 .prompt-echo {
-    color: #8b95a5;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 16px;
+    color: #8b95a5 !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
 }
 .generated-text {
-    color: #e2e8f0;
-    font-family: 'Noto Sans Bengali', sans-serif;
-    font-size: 16px;
+    color: #e2e8f0 !important;
+    font-size: 16px !important;
+    line-height: 1.8 !important;
 }
-.metric-box {
-    background: #161b22;
-    border: 1px solid #2a3140;
-    border-radius: 8px;
-    padding: 8px 12px;
+
+/* ── Base: tighten default Streamlit spacing ── */
+.block-container {
+    padding-top: 2rem !important;
+    max-width: 100% !important;
+}
+[data-testid="stVerticalBlock"] > div {
+    gap: 0.5rem !important;
+}
+
+/* ── Sidebar cleanup ── */
+section[data-testid="stSidebar"] .block-container {
+    padding: 1rem !important;
+}
+section[data-testid="stSidebar"] [data-testid="stMarkdown"] p {
+    font-size: 13px !important;
+}
+
+/* ── Result cards ── */
+.result-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
     font-family: monospace;
     font-size: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.result-card-header .model-label {
+    color: #38bdf8;
+    font-weight: 600;
+}
+.result-card-header .stats-label {
+    color: #8b95a5;
+}
+.result-card-body {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
-/* ── Mobile & tablet responsive ── */
+/* ── Quick prompt buttons ── */
+.qp-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+.qp-grid button {
+    font-family: 'Noto Sans Bengali', sans-serif !important;
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    white-space: nowrap !important;
+}
 
-/* Make sidebar narrower on tablets */
+/* ── Tablet ── */
 @media (max-width: 1024px) {
-    [data-testid="stSidebar"] {
-        min-width: 260px !important;
-        max-width: 260px !important;
+    section[data-testid="stSidebar"] {
+        width: 280px !important;
+    }
+    .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 }
 
-/* Mobile: full-width everything */
+/* ── Mobile ── */
 @media (max-width: 768px) {
-    [data-testid="stSidebar"] {
-        min-width: 100% !important;
-        max-width: 100% !important;
+    /* Title */
+    h1 { font-size: 1.3rem !important; }
+
+    /* Main content padding */
+    .block-container {
+        padding: 0.75rem 0.5rem !important;
     }
-    .prompt-echo, .generated-text, .bengali-text {
+
+    /* Bengali text smaller */
+    .prompt-echo, .generated-text {
         font-size: 14px !important;
         line-height: 1.6 !important;
     }
-    /* Tighter padding */
-    .block-container {
-        padding: 1rem 0.75rem !important;
-    }
-    /* Stack quick prompt buttons */
-    [data-testid="stHorizontalBlock"] {
-        flex-wrap: wrap !important;
-        gap: 4px !important;
-    }
-    [data-testid="stHorizontalBlock"] > div {
-        flex: 1 1 45% !important;
-        min-width: 120px !important;
-    }
-    /* Smaller headings */
-    h1 { font-size: 1.4rem !important; }
-    /* Make text areas full width */
+
+    /* Text area */
     textarea {
         font-size: 14px !important;
+        min-height: 80px !important;
+    }
+
+    /* Result header stacks */
+    .result-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Warning banner tighter */
+    [data-testid="stAlert"] {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+    }
+    [data-testid="stAlert"] p {
+        font-size: 13px !important;
     }
 }
 
-/* Touch-friendly: bigger tap targets */
-@media (pointer: coarse) {
-    button {
-        min-height: 44px !important;
-    }
-    [data-testid="stSlider"] {
-        padding: 8px 0 !important;
-    }
-}
-
-/* Hide hamburger menu decoration on small screens */
+/* ── Small phones ── */
 @media (max-width: 480px) {
-    header[data-testid="stHeader"] {
-        padding: 0.5rem !important;
+    h1 { font-size: 1.1rem !important; }
+    .prompt-echo, .generated-text {
+        font-size: 13px !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stMarkdown"] p {
+        font-size: 12px !important;
+    }
+}
+
+/* ── Touch: bigger tap targets ── */
+@media (pointer: coarse) {
+    button[kind="primary"], button[kind="secondary"],
+    [data-testid="baseButton-primary"],
+    [data-testid="baseButton-secondary"] {
+        min-height: 44px !important;
+        font-size: 14px !important;
+    }
+    [data-testid="stSlider"] > div {
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+    }
+    [data-testid="stCheckbox"] label {
+        min-height: 44px !important;
+        display: flex !important;
+        align-items: center !important;
     }
 }
 </style>
@@ -435,7 +506,7 @@ with st.sidebar:
 
 # ── Main area ────────────────────────────────────────────────────
 
-# Quick prompts — 3 columns wraps better on mobile than 5
+# Quick prompts — 2 rows, wraps on mobile
 quick_prompts = [
     "বাংলাদেশের ইতিহাস",
     "আমার প্রিয় খাবার হলো",
@@ -444,13 +515,10 @@ quick_prompts = [
     "শিক্ষার গুরুত্ব হলো",
 ]
 
-row1 = st.columns(3)
-row2 = st.columns(3)
-all_cols = row1 + row2
+qp_cols = st.columns(3)
 for i, qp in enumerate(quick_prompts):
-    if i < len(all_cols):
-        if all_cols[i].button(qp, key=f"qp_{i}", use_container_width=True):
-            st.session_state["prompt_text"] = qp
+    if qp_cols[i % 3].button(qp, key=f"qp_{i}", use_container_width=True):
+        st.session_state["prompt_text"] = qp
 
 # Prompt input
 prompt = st.text_area(
@@ -519,23 +587,20 @@ else:
             param_label = (f"{p/1000:.1f}B" if p >= 1000 else f"{p}M")
 
         with st.container(border=True):
-            # Header
-            header_cols = st.columns([3, 2])
-            header_cols[0].markdown(
-                f"**`{r['model_name']}`**"
-                + (f" · {param_label}" if param_label else "")
-            )
-            header_cols[1].markdown(
-                f"<div style='text-align:right;font-family:monospace;"
-                f"font-size:12px;color:#8b95a5;'>"
-                f"{r['new_tokens']} tok · {r['elapsed_s']}s · "
-                f"{r['tokens_per_s']} tok/s</div>",
-                unsafe_allow_html=True,
-            )
-
-            # Body
+            # Header with responsive layout
+            param_display = ""
+            if param_label:
+                param_display = f" · {param_label}"
             st.markdown(
+                f"<div class='result-card-header'>"
+                f"<span class='model-label'>{r['model_name']}{param_display}</span>"
+                f"<span class='stats-label'>"
+                f"{r['new_tokens']} tok · {r['elapsed_s']}s · "
+                f"{r['tokens_per_s']} tok/s</span>"
+                f"</div>"
+                f"<div class='result-card-body'>"
                 f"<span class='prompt-echo'>{r['prompt']}</span> "
-                f"<span class='generated-text'>{r['generated']}</span>",
+                f"<span class='generated-text'>{r['generated']}</span>"
+                f"</div>",
                 unsafe_allow_html=True,
             )
