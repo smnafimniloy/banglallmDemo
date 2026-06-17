@@ -53,12 +53,15 @@ def ensure_model_downloaded():
             pass
 
     if not hf_repo:
-        return
+        # Last resort: hardcoded fallback
+        hf_repo = "smnafimniloy/banglallm-test"
 
-    models_exist = any(
-        "config.json" in files
-        for _, _, files in os.walk(args.models_root)
-    ) if os.path.exists(args.models_root) else False
+    models_exist = False
+    if os.path.exists(args.models_root):
+        for _, _, files in os.walk(args.models_root):
+            if "config.json" in files:
+                models_exist = True
+                break
 
     if models_exist:
         return
@@ -67,13 +70,21 @@ def ensure_model_downloaded():
         from huggingface_hub import snapshot_download
         dest = os.path.join(args.models_root, "hf_model")
         os.makedirs(dest, exist_ok=True)
-        st.toast(f"Downloading model from {hf_repo}...")
-        snapshot_download(
-            repo_id=hf_repo,
-            local_dir=dest,
-            local_dir_use_symlinks=False,
-        )
-        st.toast("Model downloaded successfully")
+        with st.status(f"Downloading model from {hf_repo}...", expanded=True) as status:
+            st.write(f"Repository: {hf_repo}")
+            st.write(f"Destination: {dest}")
+            snapshot_download(
+                repo_id=hf_repo,
+                local_dir=dest,
+                local_dir_use_symlinks=False,
+            )
+            # List downloaded files
+            for root, dirs, files in os.walk(dest):
+                for f in files:
+                    fp = os.path.join(root, f)
+                    size = os.path.getsize(fp) / 1e6
+                    st.write(f"  {os.path.relpath(fp, dest)} ({size:.1f} MB)")
+            status.update(label="Model downloaded", state="complete")
     except Exception as e:
         st.error(f"Failed to download model from {hf_repo}: {e}")
         st.stop()
@@ -88,8 +99,14 @@ ensure_model_downloaded()
 def find_sp_model(root):
     if args.sp_model and os.path.exists(args.sp_model):
         return args.sp_model
+    # Search for any .model file under root
     for pattern in ["**/bangla_spm.model", "**/*.model"]:
         hits = glob.glob(os.path.join(root, pattern), recursive=True)
+        if hits:
+            return hits[0]
+    # Also check current directory
+    for pattern in ["**/bangla_spm.model", "**/*.model"]:
+        hits = glob.glob(pattern, recursive=True)
         if hits:
             return hits[0]
     return None
