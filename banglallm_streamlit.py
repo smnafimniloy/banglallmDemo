@@ -44,6 +44,14 @@ args, _ = parser.parse_known_args()
 def ensure_model_downloaded():
     """Download model from HF Hub if not already on disk."""
     hf_repo = args.hf_repo or os.environ.get("HF_REPO")
+
+    # Streamlit Cloud stores secrets in st.secrets, not os.environ
+    if not hf_repo:
+        try:
+            hf_repo = st.secrets.get("HF_REPO")
+        except Exception:
+            pass
+
     if not hf_repo:
         return
 
