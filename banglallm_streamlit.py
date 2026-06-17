@@ -288,6 +288,13 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("✦ বাংলাLLM Playground")
+st.warning(
+    "⚠️ **This model is in early development.** "
+    "Output is largely random and not meaningful. "
+    "The model has not been fully trained yet — "
+    "this playground is for testing and research purposes only.",
+    icon="🚧",
+)
 
 # ── Load SP ──
 sp, sp_path = load_sp()
