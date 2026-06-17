@@ -1,0 +1,8 @@
+'EOF'
+streamlit
+torch --index-url https://download.pytorch.org/whl/cpu
+transformers
+sentencepiece
+safetensors
+huggingface_hub
+'EOF'
