@@ -284,6 +284,64 @@ st.markdown("""
     font-family: monospace;
     font-size: 12px;
 }
+
+/* ── Mobile & tablet responsive ── */
+
+/* Make sidebar narrower on tablets */
+@media (max-width: 1024px) {
+    [data-testid="stSidebar"] {
+        min-width: 260px !important;
+        max-width: 260px !important;
+    }
+}
+
+/* Mobile: full-width everything */
+@media (max-width: 768px) {
+    [data-testid="stSidebar"] {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+    .prompt-echo, .generated-text, .bengali-text {
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+    }
+    /* Tighter padding */
+    .block-container {
+        padding: 1rem 0.75rem !important;
+    }
+    /* Stack quick prompt buttons */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+    }
+    [data-testid="stHorizontalBlock"] > div {
+        flex: 1 1 45% !important;
+        min-width: 120px !important;
+    }
+    /* Smaller headings */
+    h1 { font-size: 1.4rem !important; }
+    /* Make text areas full width */
+    textarea {
+        font-size: 14px !important;
+    }
+}
+
+/* Touch-friendly: bigger tap targets */
+@media (pointer: coarse) {
+    button {
+        min-height: 44px !important;
+    }
+    [data-testid="stSlider"] {
+        padding: 8px 0 !important;
+    }
+}
+
+/* Hide hamburger menu decoration on small screens */
+@media (max-width: 480px) {
+    header[data-testid="stHeader"] {
+        padding: 0.5rem !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -377,7 +435,7 @@ with st.sidebar:
 
 # ── Main area ────────────────────────────────────────────────────
 
-# Quick prompts
+# Quick prompts — 3 columns wraps better on mobile than 5
 quick_prompts = [
     "বাংলাদেশের ইতিহাস",
     "আমার প্রিয় খাবার হলো",
@@ -386,10 +444,13 @@ quick_prompts = [
     "শিক্ষার গুরুত্ব হলো",
 ]
 
-cols = st.columns(len(quick_prompts))
+row1 = st.columns(3)
+row2 = st.columns(3)
+all_cols = row1 + row2
 for i, qp in enumerate(quick_prompts):
-    if cols[i].button(qp, key=f"qp_{i}", use_container_width=True):
-        st.session_state["prompt_text"] = qp
+    if i < len(all_cols):
+        if all_cols[i].button(qp, key=f"qp_{i}", use_container_width=True):
+            st.session_state["prompt_text"] = qp
 
 # Prompt input
 prompt = st.text_area(
